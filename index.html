@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg"><meta property="og:title" content="SushiDay Astana — суши с доставкой"><meta property="og:description" content="Выбирайте сеты и роллы, добавляйте в корзину, оформляйте доставку и отправляйте заказ в WhatsApp."><meta property="og:type" content="website"><meta property="og:image" content="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1200&q=85"><link rel="stylesheet" href="./styles.css">
 </head>
 <body class="shop-page">
 <div class="announcement" id="announcement">Доставка по Астане <span class="dot"></span> Удобный заказ через WhatsApp <span class="dot"></span> Без лишних переписок</div>
@@ -100,7 +100,7 @@
     <div class="form-row"><div class="form-group"><label for="apartment">Квартира / офис</label><input id="apartment" name="apartment" placeholder="Напр. 25"></div><div class="form-group"><label for="entrance">Подъезд / этаж</label><input id="entrance" name="entrance" placeholder="Напр. 2 / 5"></div></div>
    </div>
    <div class="form-group"><label for="payment">Способ оплаты</label><select id="payment" name="payment"><option value="Kaspi перевод / QR">Kaspi перевод / QR</option><option value="Наличными">Наличными</option><option value="Картой (согласовать)">Картой (согласовать)</option></select></div>
-   <div class="form-group" id="kaspi-wrap"><label for="kaspi-phone">Номер телефона Kaspi для счёта <span class="optional">(необязательно)</span></label><input id="kaspi-phone" name="kaspi" type="tel" inputmode="tel" placeholder="+7 (777) 123-45-67"><small>Номер телефона, не номер карты. Оплата на сайте не списывается.</small></div>
+   <div class="form-group" id="kaspi-wrap"><label for="kaspi-phone">Номер телефона Kaspi для счёта <span class="optional">(необязательно)</span></label><input id="kaspi-phone" name="kaspi" type="tel" inputmode="tel" placeholder="+7 (777) 123-45-67"><small>Номер телефона, не номер карты. Оплата на сайте не списывается.</small></div><div class="kaspi-note" id="kaspi-receiver-box" hidden></div>
    <div class="form-group"><label for="customer-comment">Комментарий</label><textarea id="customer-comment" name="comment" rows="2" maxlength="500" placeholder="Не добавлять васаби, позвонить по прибытии..."></textarea></div>
    <label class="privacy-check"><input type="checkbox" id="privacy" required><span>Согласен(на) передать эти данные ресторану через WhatsApp для обработки заказа.</span></label>
    <div class="checkout-total"><span>Итого за товары</span><strong id="checkout-total">0 ₸</strong><small>Доставка по согласованию</small></div>
