@@ -63,6 +63,12 @@ async function inspect(page,width){
  await page.waitForFunction(()=>{const r=document.querySelector("#cart-drawer").getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1;},{timeout:3500});
  const cart=await (await page.$("#cart-drawer")).boundingBox();
  assert.ok(cart&&cart.x>=-1&&cart.x+cart.width<=width+1,"Cart offscreen at "+width);
+ const state=await page.evaluate(()=>{
+  const el=document.querySelector("#go-checkout"),footer=document.querySelector("#cart-footer"),drawer=document.querySelector("#cart-drawer");
+  const r=el.getBoundingClientRect();
+  return {cartCount:document.querySelector("[data-cart-count]").textContent,footerHidden:footer.hidden,buttonDisplay:getComputedStyle(el).display,buttonRect:{top:r.top,right:r.right,bottom:r.bottom,left:r.left,width:r.width,height:r.height},drawerRect:drawer.getBoundingClientRect().toJSON(),cartItems:document.querySelector("#cart-items").textContent.slice(0,100)};
+ });
+ if(state.footerHidden||!state.buttonRect.height){console.error("DEBUG checkout unavailable",width,state);}
  await page.click("#go-checkout");
  assert.equal(await page.$eval("#checkout-view",e=>!e.hidden),true);
  await page.click("#close-cart");
