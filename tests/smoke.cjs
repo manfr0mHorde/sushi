@@ -25,6 +25,13 @@ async function storefront(){
   await until(()=>doc.querySelectorAll(".product-card").length>0,"storefront catalog");
   assert.ok(doc.body.textContent.includes("Сет Ассорти"),"real sourced demo item appears");
   assert.ok(doc.getElementById("demo-notice").hidden===false,"unverified prices marked demo");
+  const detailsButton=doc.querySelector('[data-details="set-assorti"]');
+  assert.ok(detailsButton,"a set has an ingredient details button");
+  detailsButton.click();
+  assert.equal(doc.getElementById("details-modal").getAttribute("aria-hidden"),"false");
+  assert.equal(doc.getElementById("details-pending").hidden,false,"unconfirmed composition remains honest");
+  doc.getElementById("details-close").click();
+  assert.equal(doc.getElementById("details-modal").getAttribute("aria-hidden"),"true");
   doc.querySelector("[data-change='set-assorti']").click();
   assert.equal(doc.querySelector("[data-cart-count]").textContent,"1","basket counter increments");
   doc.getElementById("open-cart").click();
@@ -64,6 +71,17 @@ async function admin(){
   doc.getElementById("product-form").dispatchEvent(new dom.window.Event("submit",{bubbles:true,cancelable:true}));
   await until(()=>Number(doc.getElementById("stat-total").textContent)===total+1,"product creation");
   assert.ok(doc.getElementById("admin-products").textContent.includes("Тестовый ролл"),"new item appears");
+  // Editing a set stores actual recipe data instead of guessing its ingredients.
+  doc.querySelector('[data-edit="set-assorti"]').click();
+  assert.equal(doc.getElementById("set-editor-fields").hidden,false);
+  doc.getElementById("product-pieces").value="24";
+  doc.getElementById("product-composition").value="Филадельфия — 8 шт.\nКалифорния — 8 шт.\nТемпура — 8 шт.";
+  doc.getElementById("product-form").dispatchEvent(new dom.window.Event("submit",{bubbles:true,cancelable:true}));
+  await until(()=>dom.window.SD.store.products.find(p=>p.id==="set-assorti")?.pieces===24,"composition saved");
+  assert.ok(dom.window.SD.store.products.find(p=>p.id==="set-assorti").composition.includes("Калифорния"));
+  doc.querySelector('[data-edit="set-assorti"]').click();
+  assert.ok(doc.getElementById("product-composition").value.includes("Темпура"),"composition editable on repeat visit");
+  doc.getElementById("close-modal").click();
   doc.querySelector("[data-tab='settings']").click();
   doc.getElementById("setting-whatsapp").value="+7 777 555 44 33";
   doc.getElementById("settings-form").dispatchEvent(new dom.window.Event("submit",{bubbles:true,cancelable:true}));
