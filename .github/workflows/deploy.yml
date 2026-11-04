@@ -26,8 +26,18 @@ jobs:
           node --check admin.js
       - name: Run functional smoke tests
         run: |
-          npm install --prefix /tmp/sushiday-smoke --no-save --no-audit --no-fund jsdom@26
+          npm install --prefix /tmp/sushiday-smoke --no-save --no-audit --no-fund jsdom@26 puppeteer-core@24
           NODE_PATH=/tmp/sushiday-smoke/node_modules node tests/smoke.cjs
+      - name: Check mobile layouts in real Chromium
+        run: |
+          NODE_PATH=/tmp/sushiday-smoke/node_modules node tests/mobile-layout.cjs
+      - name: Upload mobile preview screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sushiday-mobile-design-check
+          path: /tmp/sushiday-shots
+          if-no-files-found: ignore
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site
