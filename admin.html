@@ -13,7 +13,7 @@
  <div class="login-card">
   <a href="./" class="brand"><span class="brand-icon"><span class="brand-dot"></span><span class="brand-line"></span></span><span class="brand-name">sushi<span>day</span><small>ADMIN PANEL</small></span></a>
   <h1>С возвращением!</h1><p>Панель управления каталогом SushiDay. Здесь можно менять цены, добавлять блюда и настраивать заказы.</p>
-  <div id="demo-login" hidden><div class="login-warning"><strong>Демонстрационный режим</strong><p>Сейчас нет подключения к серверу. Изменения останутся только в этом браузере. Эта кнопка не является защищённой авторизацией.</p></div><button type="button" id="enter-demo" class="btn btn-red btn-block">Открыть демо-админку <span>↗</span></button></div>
+  <div id="demo-login" hidden><div class="login-warning"><strong>Демонстрационный режим</strong><p>Сейчас нет подключения к серверу. Изменения останутся только в этом браузере. Эта кнопка не является защищённой авторизацией.</p></div><button type="button" id="enter-demo" class="btn btn-red btn-block">Открыть демо-админку <span>&rarr;</span></button></div>
   <form id="login-form" hidden><div class="form-group"><label for="admin-email">Email администратора</label><input type="email" id="admin-email" autocomplete="username" required placeholder="admin@example.com"></div><div class="form-group"><label for="admin-pass">Пароль</label><input type="password" id="admin-pass" autocomplete="current-password" required minlength="6" placeholder="••••••••"></div><button type="submit" class="btn btn-red btn-block" id="login-submit">Войти <span>→</span></button></form>
   <div class="login-message" id="login-message" hidden></div>
   <p style="font-size:11px;text-align:center;margin-top:24px"><a href="./" style="color:#c53631;font-weight:800">← Вернуться в магазин</a></p>
@@ -26,7 +26,7 @@
   <div class="admin-bottom"><span id="admin-mode">Панель управления</span><a href="./">← Смотреть сайт</a><button id="logout" class="small-action" type="button" style="background:transparent;color:white;text-align:left">Выйти из панели</button></div>
  </aside>
  <main class="admin-main">
-  <div class="admin-top"><div><small>Управление SushiDay / <span id="breadcrumb">Каталог</span></small><h1 id="admin-title">Меню и товары</h1></div><div class="admin-top-right"><span class="admin-chip" id="mode-chip">SushiDay</span><a href="./" class="btn btn-outline btn-sm">На сайт ↗</a><button type="button" class="small-action mobile-logout" id="logout-mobile">Выйти</button></div></div>
+  <div class="admin-top"><div><small>Управление SushiDay / <span id="breadcrumb">Каталог</span></small><h1 id="admin-title">Меню и товары</h1></div><div class="admin-top-right"><span class="admin-chip" id="mode-chip">SushiDay</span><a href="./" class="btn btn-outline btn-sm">На сайт &rarr;</a><button type="button" class="small-action mobile-logout" id="logout-mobile">Выйти</button></div></div>
   <div id="demo-warning" class="admin-warning" hidden><strong>⚠ Демо-режим без сервера</strong>Все изменения видны только в этом браузере. Для общей защищённой админ-панели и синхронизации каталога между устройствами подключите Supabase по инструкции README.md.</div>
   <section class="section-panel" id="catalog-panel">
    <div class="stat-grid"><div class="stat-card"><span>Всего позиций</span><strong id="stat-total">0</strong></div><div class="stat-card"><span>В продаже</span><strong id="stat-visible">0</strong></div><div class="stat-card"><span>Категорий</span><strong id="stat-categories">0</strong></div></div>
