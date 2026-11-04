@@ -75,7 +75,7 @@ function openCart(checkout=false){
  $("cart-drawer").setAttribute("aria-hidden","false");
  $("drawer-backdrop").hidden=false;
  document.body.classList.add("drawer-open");
- $("drawer-title").textContent=state.checkout?"Оформление":"Корзина";
+ $("drawer-title").firstChild.textContent=(state.checkout?"Оформление":"Корзина")+" ";
  if(state.checkout) $("customer-name").focus();else $("close-cart").focus();
  renderCart();
 }
