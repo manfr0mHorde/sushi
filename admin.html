@@ -61,7 +61,11 @@
    <input type="hidden" id="product-id">
    <div class="form-group"><label for="product-name">Название <sup>*</sup></label><input id="product-name" required maxlength="120" placeholder="Например, Сет Филадельфия"></div>
    <div class="form-row"><div class="form-group"><label for="product-category">Категория</label><select id="product-category" required></select></div><div class="form-group"><label for="product-price">Цена, ₸ <sup>*</sup></label><input id="product-price" type="number" required min="0" step="1" placeholder="4990"></div></div>
-   <div class="form-group"><label for="product-description">Описание, состав или вес</label><textarea id="product-description" rows="2" maxlength="450" placeholder="24 шт · состав сета..."></textarea></div>
+   <div class="form-group"><label for="product-description">Вес / краткое описание</label><textarea id="product-description" rows="2" maxlength="450" placeholder="Например: 1,5 кг"></textarea></div>
+<div class="set-editor-fields" id="set-editor-fields">
+ <div class="form-group"><label for="product-pieces">Количество кусочков в сете (если известно)</label><input type="number" min="1" max="400" step="1" id="product-pieces" placeholder="Например: 32"><small>Не указывайте количество наугад. Если неизвестно — оставьте пустым.</small></div>
+ <div class="form-group"><label for="product-composition">Что входит в сет</label><textarea id="product-composition" rows="5" maxlength="1800" placeholder="Филадельфия — 8 шт.&#10;Калифорния — 8 шт.&#10;Темпура — 8 шт."></textarea><small>Каждый вид роллов с новой строки. Покупатель увидит состав в карточке и подробном окне; эти данные также попадут в заказ WhatsApp. Заполняйте только после сверки с рестораном.</small></div>
+</div>
    <div class="form-group"><label for="product-image">Ссылка на фото товара (HTTPS)</label><input id="product-image" type="url" placeholder="https://..."><small>Для реального меню используйте собственные фотографии ресторана. Пока в демо применены иллюстративные фото.</small></div>
    <img id="image-preview" class="modal-preview" alt="Предпросмотр фото" hidden>
    <div class="form-row"><div class="form-group"><label for="product-badge">Метка на товаре</label><input id="product-badge" maxlength="36" placeholder="Хит / Новинка"></div><div class="form-group"><label for="product-sort">Порядок в меню</label><input id="product-sort" type="number" min="0" step="1" value="0"></div></div>
