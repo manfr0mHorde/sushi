@@ -34,6 +34,13 @@ async function inspect(page,width){
     compositionButton:r(".set-details-link"),productCount:document.querySelectorAll(".product-card").length
   };
  });
+ if(info.viewport!==width||info.doc>width+1){
+  const offenders=await page.evaluate((target)=>Array.from(document.querySelectorAll("body *")).map(el=>{
+    const r=el.getBoundingClientRect();
+    return {tag:el.tagName.toLowerCase(),id:el.id,cls:String(el.className||"").slice(0,90),left:Math.round(r.left),right:Math.round(r.right),width:Math.round(r.width),scroll:el.scrollWidth};
+  }).filter(x=>x.right>target+1||x.left< -2).sort((a,b)=>b.right-a.right).slice(0,30),width);
+  console.log("DEBUG mobile overflow",width,JSON.stringify(info),JSON.stringify(offenders));
+ }
  assert.equal(info.viewport,width);
  assert.ok(info.doc<=width+1,"Document horizontal overflow: "+JSON.stringify(info));
  for(const el of ["hero","heading","primary","secondary","grid","firstCard","compositionButton"]){
