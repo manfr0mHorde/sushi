@@ -168,3 +168,6 @@ body.details-open{overflow:hidden}
  .mobile-cart-btn>span:last-child{font-size:10px}
 }
 @media(prefers-reduced-motion:reduce){.hero-buttons .btn-svg,.details-modal{transition:none}}
+
+/* Prevent 2px horizontal viewport expansion on narrow phones when categories scroll. */
+@media(max-width:520px){.category-scroll{margin-right:-14px;padding-right:14px}}
