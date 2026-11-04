@@ -29,6 +29,8 @@ async function storefront(){
   assert.equal(doc.querySelector("[data-cart-count]").textContent,"1","basket counter increments");
   doc.getElementById("open-cart").click();
   assert.equal(doc.getElementById("cart-drawer").getAttribute("aria-hidden"),"false");
+  doc.querySelector("#cart-items [data-delta=\"1\"]").click();
+  assert.equal(doc.querySelector("[data-cart-count]").textContent,"2","basket updates within drawer without losing count element");
   doc.getElementById("go-checkout").click();
   assert.equal(doc.getElementById("checkout-view").hidden,false);
   doc.getElementById("customer-name").value="Тест Клиент";
@@ -40,7 +42,7 @@ async function storefront(){
   doc.getElementById("checkout-form").dispatchEvent(new dom.window.Event("submit",{bubbles:true,cancelable:true}));
   assert.ok(url.startsWith("https://api.whatsapp.com/send?text="),"unconfigured chat uses share flow only");
   const msg=decodeURIComponent(url.split("?text=")[1]);
-  assert.ok(msg.includes("Сет Ассорти × 1"),"contains item and quantity");
+  assert.ok(msg.includes("Сет Ассорти × 2"),"contains item and quantity");
   assert.ok(msg.includes("Кабанбай батыр 1"),"contains delivery address");
   assert.ok(msg.includes("Тест Клиент"),"contains contact name");
   assert.ok(msg.includes("Цены предварительные"),"unverified prices disclosed");
