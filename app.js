@@ -25,23 +25,60 @@ function updateCartButtons(){
 }
 function makeCategory(c){
  const selected=state.category===c.id;
- return '<button type="button" class="category-btn '+(selected?'active':'')+'" data-category="'+SD.escape(c.id)+'" aria-pressed="'+selected+'"><span>'+c.emoji+'</span>'+SD.escape(c.name)+'</button>';
+ return '<button type="button" class="category-btn '+(selected?'active':'')+'" data-category="'+SD.escape(c.id)+'" aria-pressed="'+selected+'"><span class="category-indicator" aria-hidden="true"></span>'+SD.escape(c.name)+'</button>';
 }
 function renderCategories(){
  $("categories").innerHTML=SD.categories.map(makeCategory).join("");
 }
 function makeCard(p){
- const qty=Number(state.cart[p.id]||0),src=SD.photo(p.image);
+ const qty=Number(state.cart[p.id]||0),src=SD.photo(p.image),isSet=p.category==="sets";
+ const composition=String(p.composition||"").trim();
+ const pieces=Number(p.pieces)||0;
+ const meta=isSet?(pieces?pieces+" шт. · ":"")+(p.description||"Вес уточняется"):(p.description||"");
+ const ingredients=composition.split(/\r?\n/).filter(Boolean).slice(0,3).join(" · ");
  return '<article class="product-card">'+
   '<div class="product-photo">'+(src?'<img src="'+SD.escape(src)+'" alt="'+SD.escape(p.name)+' — иллюстративное фото" loading="lazy">':'<div class="image-fallback">🍣</div>')+
   (p.badge?'<span class="card-tag">'+SD.escape(p.badge)+'</span>':'')+
   '</div><div class="product-info"><div class="product-category">'+SD.escape(SD.categories.find(c=>c.id===p.category)?.name||"Меню")+'</div>'+
-  '<h3>'+SD.escape(p.name)+'</h3><p class="product-description">'+SD.escape(p.description||"Приготовлено с заботой")+'</p>'+
+  '<h3>'+SD.escape(p.name)+'</h3><p class="product-description">'+SD.escape(meta)+'</p>'+
+  (isSet?'<div class="set-content"><span class="set-content-label">'+(composition?"В СОСТАВЕ":"СОСТАВ СЕТА")+'</span><p class="set-content-preview'+(composition?"":" unavailable")+'">'+SD.escape(composition?ingredients:"Точный состав уточняется")+'</p><button type="button" class="set-details-link" data-details="'+SD.escape(p.id)+'">'+(composition?"Подробнее о составе":"Посмотреть информацию")+'<span class="inline-chevron" aria-hidden="true"></span></button></div>':"")+
   '<div class="product-bottom"><span class="product-price">'+SD.money(p.price)+'</span>'+
   (qty?
    '<div class="quantity-control"><button type="button" data-change="'+SD.escape(p.id)+'" data-delta="-1" aria-label="Уменьшить '+SD.escape(p.name)+'">−</button><span>'+qty+'</span><button type="button" data-change="'+SD.escape(p.id)+'" data-delta="1" aria-label="Увеличить '+SD.escape(p.name)+'">+</button></div>':
    '<button type="button" class="add-btn" data-change="'+SD.escape(p.id)+'" data-delta="1" aria-label="Добавить '+SD.escape(p.name)+'">+</button>')+
   '</div></div></article>';
+}
+let lastDetailsTrigger=null;
+let detailsId=null;
+function showDetails(id,trigger){
+ const p=getProduct(id);if(!p)return;
+ detailsId=id;lastDetailsTrigger=trigger||null;
+ $("details-title").textContent=p.name;
+ $("details-weight").textContent=[p.pieces?Number(p.pieces)+" шт.":null,p.description||null].filter(Boolean).join(" · ");
+ $("details-price").textContent=SD.money(p.price);
+ $("details-composition-heading").textContent=p.category==="sets"?"Что входит в сет":"Описание блюда";
+ const lines=String(p.composition||"").split(/\r?\n/).map(t=>t.trim()).filter(Boolean).slice(0,40);
+ $("details-list").replaceChildren();
+ for(const line of lines){const li=document.createElement("li");li.textContent=line;$("details-list").append(li);}
+ $("details-list").hidden=lines.length===0;
+ $("details-pending").hidden=lines.length>0;
+ const img=$("details-image"),src=SD.photo(p.image);
+ img.hidden=!src;
+ if(src){img.src=src;img.alt=p.name+" — иллюстративное фото";}
+ $("details-backdrop").hidden=false;
+ $("details-modal").classList.add("open");
+ $("details-modal").setAttribute("aria-hidden","false");
+ document.body.classList.add("details-open");
+ $("details-close").focus();
+}
+function closeDetails(){
+ $("details-backdrop").hidden=true;
+ $("details-modal").classList.remove("open");
+ $("details-modal").setAttribute("aria-hidden","true");
+ document.body.classList.remove("details-open");
+ detailsId=null;
+ if(lastDetailsTrigger&&lastDetailsTrigger.isConnected)lastDetailsTrigger.focus();
+ lastDetailsTrigger=null;
 }
 function renderProducts(){
  const prods=SD.store.products.filter(p=>p.visible!==false && (state.category==="all"||p.category===state.category) && (p.name+" "+(p.description||"")).toLocaleLowerCase("ru").includes(state.query)).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
@@ -98,7 +135,11 @@ function buildOrder(){
  const kaspi=d.get("payment")==="Kaspi перевод / QR"?(d.get("kaspi")||"").trim():"";
  if(kaspi&&!SD.phoneOk(kaspi))throw Error("Проверьте номер телефона Kaspi.");
  if(!$("privacy").checked)throw Error("Необходимо согласие на передачу данных в WhatsApp.");
- const lines=cartEntries().map(({product:p,qty},i)=>(i+1)+". "+p.name+" × "+qty+" — "+SD.money(p.price*qty));
+ const lines=cartEntries().flatMap(({product:p,qty},i)=>{
+ const row=(i+1)+". "+p.name+" × "+qty+" — "+SD.money(p.price*qty);
+ const composition=String(p.composition||"").trim().replace(/\r?\n/g,", ");
+ return composition?[row,"   Состав: "+composition]:[row];
+});
  const extra=[(d.get("apartment")||"").trim()&&"кв./офис "+d.get("apartment").trim(),(d.get("entrance")||"").trim()&&"подъезд/этаж "+d.get("entrance").trim()].filter(Boolean).join(", ");
  const delivery=SD.store.settings.delivery_fee;
  const feeInfo=fulfilment==="Самовывоз"?"Самовывоз":delivery==null?"Стоимость доставки уточнить":Number(delivery)===0?"Доставка по согласованию":"Стоимость доставки (ориентир): "+SD.money(delivery);
@@ -155,7 +196,7 @@ function checkoutChanges(){
 }
 function bind(){
  $("categories").addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(!b)return;state.category=b.dataset.category;renderCategories();renderProducts();});
- $("product-grid").addEventListener("click",e=>{const b=e.target.closest("[data-change]");if(b)setCart(b.dataset.change,Number(b.dataset.delta));});
+ $("product-grid").addEventListener("click",e=>{const details=e.target.closest("[data-details]");if(details){showDetails(details.dataset.details,details);return;}const b=e.target.closest("[data-change]");if(b)setCart(b.dataset.change,Number(b.dataset.delta));});
  ["cart-items","addon-list"].forEach(id=>$(id).addEventListener("click",e=>{const b=e.target.closest("[data-change]");if(b)setCart(b.dataset.change,Number(b.dataset.delta));}));
  $("menu-search").addEventListener("input",e=>{state.query=e.target.value.trim().toLocaleLowerCase("ru");renderProducts();});
  $("reset-filters").addEventListener("click",()=>{state.category="all";state.query="";$("menu-search").value="";renderCategories();renderProducts();});
@@ -163,7 +204,10 @@ function bind(){
  ["open-cart","mobile-cart"].forEach(id=>$(id).addEventListener("click",()=>openCart()));
  $("close-cart").addEventListener("click",closeCart);
  $("drawer-backdrop").addEventListener("click",closeCart);
- document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("cart-drawer").classList.contains("open"))closeCart();});
+ $("details-backdrop").addEventListener("click",closeDetails);
+ $("details-close").addEventListener("click",closeDetails);
+ $("details-add").addEventListener("click",()=>{if(detailsId){const id=detailsId;closeDetails();setCart(id,1);}});
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("details-modal").classList.contains("open")){closeDetails();return;}if(e.key==="Escape"&&$("cart-drawer").classList.contains("open"))closeCart();});
  $("back-to-menu").addEventListener("click",()=>{closeCart();$("menu").scrollIntoView({behavior:"smooth"});});
  $("go-checkout").addEventListener("click",()=>openCart(true));
  $("back-cart").addEventListener("click",()=>openCart(false));
@@ -187,7 +231,7 @@ async function start(){
   $("price-note").hidden=!SD.store.settings.demo_mode;
   const phone=SD.store.settings.phone;
   if(phone){$("footer-phone").textContent=phone;$("footer-phone").href="tel:+"+SD.digits(phone);}
-  if(SD.store.settings.address){$("footer-address").textContent=SD.store.settings.address+" ↗";}
+  if(SD.store.settings.address){$("footer-address").textContent=SD.store.settings.address+" →";}
   $("whatsapp-hint").textContent=SD.store.settings.whatsapp?"WhatsApp откроется с готовым текстом. Для отправки нажмите «Отправить». Ресторан подтверждает заказ.":"WhatsApp ресторана ещё не настроен. Пока можно поделиться сообщением вручную; заявка автоматически не принимается.";
  }catch(ex){
   $("product-count").textContent="Не удалось загрузить меню";
