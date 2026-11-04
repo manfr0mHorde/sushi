@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#18221f">
+<meta name="robots" content="noindex,nofollow">
+<title>SushiDay — Управление меню</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body class="admin-page">
+<div id="login-screen" class="login-screen">
+ <div class="login-card">
+  <a href="./" class="brand"><span class="brand-icon"><span class="brand-dot"></span><span class="brand-line"></span></span><span class="brand-name">sushi<span>day</span><small>ADMIN PANEL</small></span></a>
+  <h1>С возвращением!</h1><p>Панель управления каталогом SushiDay. Здесь можно менять цены, добавлять блюда и настраивать заказы.</p>
+  <div id="demo-login" hidden><div class="login-warning"><strong>Демонстрационный режим</strong><p>Сейчас нет подключения к серверу. Изменения останутся только в этом браузере. Эта кнопка не является защищённой авторизацией.</p></div><button type="button" id="enter-demo" class="btn btn-red btn-block">Открыть демо-админку <span>↗</span></button></div>
+  <form id="login-form" hidden><div class="form-group"><label for="admin-email">Email администратора</label><input type="email" id="admin-email" autocomplete="username" required placeholder="admin@example.com"></div><div class="form-group"><label for="admin-pass">Пароль</label><input type="password" id="admin-pass" autocomplete="current-password" required minlength="6" placeholder="••••••••"></div><button type="submit" class="btn btn-red btn-block" id="login-submit">Войти <span>→</span></button></form>
+  <div class="login-message" id="login-message" hidden></div>
+  <p style="font-size:11px;text-align:center;margin-top:24px"><a href="./" style="color:#c53631;font-weight:800">← Вернуться в магазин</a></p>
+ </div>
+</div>
+<div class="admin-shell" id="admin-shell" hidden>
+ <aside class="admin-sidebar">
+  <a href="./" class="brand"><span class="brand-icon"><span class="brand-dot"></span><span class="brand-line"></span></span><span class="brand-name">sushi<span>day</span><small>ADMIN PANEL</small></span></a>
+  <nav class="admin-nav" aria-label="Разделы панели"><button class="active" type="button" data-tab="catalog"><span>▦</span>Каталог</button><button type="button" data-tab="settings"><span>⚙</span>Настройки</button></nav>
+  <div class="admin-bottom"><span id="admin-mode">Панель управления</span><a href="./">← Смотреть сайт</a><button id="logout" class="small-action" type="button" style="background:transparent;color:white;text-align:left">Выйти из панели</button></div>
+ </aside>
+ <main class="admin-main">
+  <div class="admin-top"><div><small>Управление SushiDay / <span id="breadcrumb">Каталог</span></small><h1 id="admin-title">Меню и товары</h1></div><div class="admin-top-right"><span class="admin-chip" id="mode-chip">SushiDay</span><a href="./" class="btn btn-outline btn-sm">На сайт ↗</a></div></div>
+  <div id="demo-warning" class="admin-warning" hidden><strong>⚠ Демо-режим без сервера</strong>Все изменения видны только в этом браузере. Для общей защищённой админ-панели и синхронизации каталога между устройствами подключите Supabase по инструкции README.md.</div>
+  <section class="section-panel" id="catalog-panel">
+   <div class="stat-grid"><div class="stat-card"><span>Всего позиций</span><strong id="stat-total">0</strong></div><div class="stat-card"><span>В продаже</span><strong id="stat-visible">0</strong></div><div class="stat-card"><span>Категорий</span><strong id="stat-categories">0</strong></div></div>
+   <div class="admin-panel">
+    <div class="panel-head"><div><h2>Каталог товаров</h2><p>Добавляйте сеты, роллы, напитки и дополнения.</p></div><div class="panel-head-buttons"><button class="btn btn-outline btn-sm" id="import-demo" type="button">Загрузить примеры</button><button class="btn btn-red btn-sm" id="add-product" type="button">+ Новый товар</button></div></div>
+    <div class="table-controls"><input type="search" id="admin-search" placeholder="Поиск по названию"><select id="admin-filter" aria-label="Фильтр категории"></select></div>
+    <div class="admin-table-scroll"><table class="admin-table"><thead><tr><th>Товар</th><th>Категория</th><th>Цена</th><th>Статус</th><th>Управление</th></tr></thead><tbody id="admin-products"></tbody></table><div class="admin-empty" id="admin-empty" hidden>Товаров пока нет. Добавьте первый товар или загрузите примеры.</div></div>
+   </div>
+  </section>
+  <section class="section-panel" id="settings-panel" hidden>
+   <div class="admin-panel"><div class="panel-head"><div><h2>Настройки ресторана</h2><p>Номер WhatsApp, контакты, доставка и публикация цен.</p></div></div>
+    <form class="admin-settings-form" id="settings-form">
+     <h3>Заказы и контакты</h3>
+     <div class="form-group"><label for="setting-whatsapp">WhatsApp для заказов (обязательно для адресной отправки)</label><input id="setting-whatsapp" type="tel" placeholder="+7 777 123 45 67"><small>Укажите именно номер, на котором работает WhatsApp ресторана. Номер из справочника не обязательно привязан к WhatsApp.</small></div>
+     <div class="form-row"><div class="form-group"><label for="setting-phone">Телефон ресторана</label><input id="setting-phone" type="tel" placeholder="+7 701 844 56 40"></div><div class="form-group"><label for="setting-address">Адрес ресторана</label><input id="setting-address" type="text" placeholder="Астана, улица, дом"></div></div>
+     <div class="form-group"><label for="setting-kaspi">Kaspi реквизит / телефон ресторана (по желанию)</label><input id="setting-kaspi" placeholder="Только официальный номер/название для переводов"><small>Для организации оплаты с подтверждением понадобятся отдельные платежные инструменты. Никаких номеров банковских карт не запрашиваем.</small></div>
+     <h3 style="margin-top:28px">Доставка</h3>
+     <div class="form-row"><div class="form-group"><label for="setting-fee">Фиксированная цена доставки, ₸</label><input id="setting-fee" type="number" min="0" step="1" placeholder="Оставьте пустым — по согласованию"></div><div class="form-group"><label for="setting-min">Минимальная сумма заказа, ₸</label><input id="setting-min" type="number" min="0" step="1" value="0"></div></div>
+     <div class="form-group"><label for="setting-delivery-note">Информация о доставке</label><textarea id="setting-delivery-note" rows="2" maxlength="400"></textarea></div>
+     <div class="toggle-row"><input type="checkbox" id="setting-demo" checked><label for="setting-demo">Показывать предупреждение о предварительных ценах<small>Отключайте только после подтверждения актуального меню с рестораном.</small></label></div>
+     <button class="btn btn-red" type="submit" id="save-settings">Сохранить настройки <span>✓</span></button><span class="admin-status" id="settings-status" aria-live="polite"></span>
+     <div class="settings-spotlight"><strong>Как будет приходить заказ?</strong>Клиент соберёт корзину и заполнит данные. Сайт создаст полный текст и откроет WhatsApp на указанный номер. Клиент должен нажать «Отправить», а ресторан подтвердить заказ. Оплата Kaspi автоматически не проходит, деньги сайт не принимает.</div>
+    </form>
+   </div>
+  </section>
+ </main>
+</div>
+<div class="admin-overlay" id="product-overlay" hidden>
+ <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-title">
+  <div class="admin-modal-head"><h2 id="product-modal-title">Новый товар</h2><button type="button" id="close-modal" class="icon-button" aria-label="Закрыть">×</button></div>
+  <form id="product-form">
+   <input type="hidden" id="product-id">
+   <div class="form-group"><label for="product-name">Название <sup>*</sup></label><input id="product-name" required maxlength="120" placeholder="Например, Сет Филадельфия"></div>
+   <div class="form-row"><div class="form-group"><label for="product-category">Категория</label><select id="product-category" required></select></div><div class="form-group"><label for="product-price">Цена, ₸ <sup>*</sup></label><input id="product-price" type="number" required min="0" step="1" placeholder="4990"></div></div>
+   <div class="form-group"><label for="product-description">Описание, состав или вес</label><textarea id="product-description" rows="2" maxlength="450" placeholder="24 шт · состав сета..."></textarea></div>
+   <div class="form-group"><label for="product-image">Ссылка на фото товара (HTTPS)</label><input id="product-image" type="url" placeholder="https://..."><small>Для реального меню используйте собственные фотографии ресторана. Пока в демо применены иллюстративные фото.</small></div>
+   <img id="image-preview" class="modal-preview" alt="Предпросмотр фото" hidden>
+   <div class="form-row"><div class="form-group"><label for="product-badge">Метка на товаре</label><input id="product-badge" maxlength="36" placeholder="Хит / Новинка"></div><div class="form-group"><label for="product-sort">Порядок в меню</label><input id="product-sort" type="number" min="0" step="1" value="0"></div></div>
+   <label class="checklabel"><input id="product-visible" type="checkbox" checked>Товар доступен на сайте</label>
+   <p class="admin-status error" id="product-error" hidden></p>
+   <div class="modal-actions"><button type="button" class="btn btn-outline" id="cancel-product">Отмена</button><button type="submit" class="btn btn-red" id="save-product">Сохранить товар</button></div>
+  </form>
+ </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<script src="./config.js" defer></script><script src="./data.js" defer></script><script src="./admin.js" defer></script>
+</body></html>
