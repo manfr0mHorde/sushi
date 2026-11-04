@@ -171,3 +171,7 @@ body.details-open{overflow:hidden}
 
 /* Prevent 2px horizontal viewport expansion on narrow phones when categories scroll. */
 @media(max-width:520px){.category-scroll{margin-right:-14px;padding-right:14px}}
+
+/* Closing a product dialog must never intercept the next tap on a menu card. */
+.details-modal:not(.open){pointer-events:none}
+.details-modal.open{pointer-events:auto}
