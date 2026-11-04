@@ -179,6 +179,7 @@ function bind(){
  $("enter-demo").addEventListener("click",showPanel);
  $("login-form").addEventListener("submit",login);
  $("logout").addEventListener("click",logout);
+ $("logout-mobile").addEventListener("click",logout);
  document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
  $("admin-search").addEventListener("input",e=>{query=e.target.value.toLocaleLowerCase("ru").trim();renderTable();});
  $("admin-filter").addEventListener("change",e=>{filter=e.target.value;renderTable();});
