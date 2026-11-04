@@ -108,12 +108,21 @@ async function saveSettings(settings){
  await refresh();
 }
 async function importDemo(){
- for(const p of demoProducts){await saveProduct(p);}
+ if(store.live){
+  const {error}=await store.client.from("products").upsert(demoProducts,{onConflict:"id"});
+  if(error)throw new Error(error.message);
+ }else{
+  const map=new Map(store.products.map(p=>[p.id,p]));
+  demoProducts.forEach(p=>map.set(p.id,p));
+  storage.set(KEY_PRODUCTS,[...map.values()]);
+ }
+ await refresh();
 }
 function money(value){return new Intl.NumberFormat("ru-RU",{maximumFractionDigits:0}).format(Number(value)||0)+" ₸";}
 function escape(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function photo(url){try{const p=new URL(url);return p.protocol==="https:"?p.href:"";}catch{return "";}}
 function digits(value){return String(value??"").replace(/\D/g,"");}
 function phoneOk(value){const d=digits(value);return d.length===11 && (d.startsWith("7")||d.startsWith("8"));}
+document.addEventListener("DOMContentLoaded",()=>{const url=window.SUSHIDAY_CONFIG?.avatarUrl; if(!photo(url))return; document.querySelectorAll(".brand-icon").forEach(icon=>{const img=document.createElement("img");img.className="brand-avatar";img.src=url;img.alt="";img.loading="lazy";img.addEventListener("error",()=>img.remove(),{once:true});icon.appendChild(img);});});
 window.SD={PHOTO,categories,demoProducts,defaults,store,storage,KEY_CART,initialize,refresh,saveProduct,removeProduct,saveSettings,importDemo,money,escape,photo,digits,phoneOk,configReady};
 })();
