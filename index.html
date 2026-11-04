@@ -37,14 +37,14 @@
     <div class="eyebrow"><span class="sun-mini"></span> ТВОЙ ВКУСНЫЙ ДЕНЬ НАЧИНАЕТСЯ ЗДЕСЬ</div>
     <h1>Влюбись <em>с первого</em> ролла.</h1>
     <p>Любимые сеты, нежные роллы и кое-что вкусное в дополнение. Выбирай в пару касаний — остальное за нами.</p>
-    <div class="hero-buttons"><a class="btn btn-red btn-lg" href="#menu">Выбрать суши <span>↗</span></a><a class="btn btn-ghost-light" href="#how">Как это работает <span>→</span></a></div>
-    <div class="hero-bottom"><span class="hero-stars">★★★★★</span><span>Собери свой идеальный заказ</span></div>
+    <div class="hero-buttons"><a class="btn btn-red btn-lg hero-primary" href="#menu">Смотреть меню <svg class="btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a><a class="btn hero-secondary" href="#how">Как заказать <svg class="btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div>
+    <div class="hero-bottom"><span class="hero-check" aria-hidden="true">✓</span><span>Выбрать, оформить, отправить — всё просто</span></div>
    </div>
    <div class="hero-visual">
     <img class="hero-photo" src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1200&q=90" alt="Аппетитные суши и роллы — иллюстративное фото" fetchpriority="high">
     <div class="hero-picture-shade"></div>
-    <div class="floating-seal"><span>FRESH<br><strong>DAY!</strong></span><span class="seal-spark">✳</span></div>
-    <div class="hero-note"><span class="hero-note-icon">✦</span><div><b>Что хочется сегодня?</b><small>Сеты · Роллы · Снэки</small></div></div>
+    <div class="floating-seal"><span class="seal-caption">SUSHIDAY</span><strong>ВКУСНО<br>КАЖДЫЙ<br>ДЕНЬ</strong></div>
+    <div class="hero-note"><span class="hero-note-icon" aria-hidden="true"><span class="hero-note-dot"></span></span><div><b>Сеты и любимые роллы</b><small>Выбирай, пока горячее</small></div></div>
    </div>
   </div>
  </div>
@@ -78,9 +78,21 @@
 <footer class="footer" id="contacts"><div class="container footer-grid">
  <div><a href="./" class="brand brand-footer"><span class="brand-icon"><span class="brand-dot"></span><span class="brand-line"></span></span><span class="brand-name">sushi<span>day</span><small>ASTANA · JAPANESE FOOD</small></span></a><p>Вкусные поводы собраться вместе.</p><span class="footer-caption">Сайт-витрина SushiDay Astana</span></div>
  <div><h4>Навигация</h4><a href="#menu">Наше меню</a><a href="#how">Как заказать</a><a href="./admin.html" class="muted-link">Для сотрудников</a></div>
- <div><h4>Мы на связи</h4><a href="https://instagram.com/sushiday_astana" target="_blank" rel="noopener">Instagram @sushiday_astana ↗</a><a id="footer-phone" href="tel:+77018445640">+7 (701) 844-56-40</a><a id="footer-address" href="https://2gis.kz/astana/firm/70000001100228508" target="_blank" rel="noopener">Астана, ул. Санжара Асфендиярова, 5 ↗</a></div>
+ <div><h4>Мы на связи</h4><a href="https://instagram.com/sushiday_astana" target="_blank" rel="noopener">Instagram @sushiday_astana →</a><a id="footer-phone" href="tel:+77018445640">+7 (701) 844-56-40</a><a id="footer-address" href="https://2gis.kz/astana/firm/70000001100228508" target="_blank" rel="noopener">Астана, ул. Санжара Асфендиярова, 5 →</a></div>
 </div><div class="container footer-bottom"><span>© <span id="footer-year"></span> SushiDay</span><span>Окончательная стоимость и наличие подтверждаются рестораном</span></div></footer>
 <div class="mobile-bar" id="mobile-bar" hidden><button type="button" id="mobile-cart" class="mobile-cart-btn"><span>🛍 <span data-cart-count>0</span> товара(ов)</span><strong id="mobile-total">0 ₸</strong><span>Корзина →</span></button></div>
+<div class="details-backdrop" id="details-backdrop" hidden></div>
+<section class="details-modal" id="details-modal" role="dialog" aria-modal="true" aria-labelledby="details-title" aria-hidden="true">
+ <button class="details-close" type="button" id="details-close" aria-label="Закрыть описание">×</button>
+ <div class="details-image-wrap"><img id="details-image" src="" alt="" loading="lazy"><span class="details-image-label">SUSHIDAY MENU</span></div>
+ <div class="details-body">
+  <div class="details-overline">ПОДРОБНЕЕ О БЛЮДЕ</div>
+  <h2 id="details-title"></h2>
+  <p id="details-weight" class="details-weight"></p>
+  <div class="details-composition"><h3 id="details-composition-heading">Что входит в сет</h3><ul id="details-list"></ul><p id="details-pending" class="details-pending" hidden>Точный состав пока не указан в доступном меню. Уточните его у ресторана перед заказом.</p></div>
+  <div class="details-bottom"><strong id="details-price"></strong><button type="button" id="details-add" class="btn btn-red">Добавить в корзину <span aria-hidden="true">+</span></button></div>
+ </div>
+</section>
 <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
 <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true">
  <div class="drawer-head"><div><span class="section-kicker">ТВОЙ ЗАКАЗ</span><h2 id="drawer-title">Корзина <span id="drawer-title-count"></span></h2></div><button type="button" class="icon-button" id="close-cart" aria-label="Закрыть корзину">×</button></div>
