@@ -57,7 +57,10 @@ async function inspect(page,width){
  const pending=await page.$eval("#details-pending",e=>!e.hidden && e.getClientRects().length>0);
  assert.equal(pending,true,"Unknown set recipe must be explained, not invented");
  await page.click("#details-close");
+ await page.waitForFunction(()=>document.querySelector("#details-modal").getAttribute("aria-hidden")==="true");
  await page.click(".product-card .add-btn");
+ const currentCount=await page.$eval("[data-cart-count]",el=>Number(el.textContent));
+ assert.equal(currentCount,1,"Tap on Add must place exactly one product into the cart at "+width);
  await page.click("#open-cart");
  // The slide-in drawer animates for 300ms; measure only after transition finishes.
  await page.waitForFunction(()=>{const r=document.querySelector("#cart-drawer").getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1;},{timeout:3500});
