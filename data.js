@@ -60,7 +60,7 @@ const rows=[
 ["ginger","sauces","Маринованный имбирь",350,"50 г","sauce",""],
 ["wasabi","sauces","Васаби",350,"40 г","sauce",""]
 ];
-const demoProducts=rows.map((r,i)=>({id:r[0],category:r[1],name:r[2],price:r[3],description:r[4],image:PHOTO[r[5]],badge:r[6],visible:true,sort_order:i}));
+const demoProducts=rows.map((r,i)=>({id:r[0],category:r[1],name:r[2],price:r[3],description:r[4],image:PHOTO[r[5]],badge:r[6],composition:"",pieces:null,visible:true,sort_order:i}));
 const defaults={whatsapp:"",phone:"+7 (701) 844-56-40",address:"ул. Санжара Асфендиярова, 5, Астана",delivery_fee:null,min_order:0,demo_mode:true,delivery_note:"Стоимость и время доставки уточняются оператором.",hero_title:"Вкусные моменты начинаются здесь"};
 const KEY_PRODUCTS="sushiday_demo_products_v2",KEY_SETTINGS="sushiday_demo_settings_v2",KEY_CART="sushiday_cart_v2";
 const store={products:[],settings:{...defaults},client:null,live:false};
