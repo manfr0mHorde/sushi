@@ -136,8 +136,8 @@ function submitCheckout(e){
   const target=validPhone?(phone.length===10?"7"+phone:phone[0]==="8"?"7"+phone.slice(1):phone):"";
   const url=target?"https://wa.me/"+target+"?text="+encodeURIComponent(order):"https://api.whatsapp.com/send?text="+encodeURIComponent(order);
   if(!target)toast("У ресторана пока не указан WhatsApp. Выберите чат вручную.");
-  const opened=window.open(url,"_blank","noopener,noreferrer");
-  if(!opened){window.location.href=url;}
+  const opened=window.open(url,"_blank");
+  if(opened){try{opened.opener=null;}catch{}}else{window.location.href=url;}
  }catch(ex){err.textContent=ex.message;err.hidden=false;err.scrollIntoView({behavior:"smooth",block:"center"});}
 }
 function checkoutChanges(){
