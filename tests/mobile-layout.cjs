@@ -59,6 +59,8 @@ async function inspect(page,width){
  await page.click("#details-close");
  await page.click(".product-card .add-btn");
  await page.click("#open-cart");
+ // The slide-in drawer animates for 300ms; measure only after transition finishes.
+ await page.waitForFunction(()=>{const r=document.querySelector("#cart-drawer").getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1;},{timeout:3500});
  const cart=await (await page.$("#cart-drawer")).boundingBox();
  assert.ok(cart&&cart.x>=-1&&cart.x+cart.width<=width+1,"Cart offscreen at "+width);
  await page.click("#go-checkout");
