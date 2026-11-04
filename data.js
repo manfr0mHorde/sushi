@@ -70,6 +70,7 @@ const storage={
 };
 function configReady(){const c=window.SUSHIDAY_CONFIG||{};return /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(c.supabaseUrl||"") && !!c.supabaseAnonKey;}
 async function initialize(){
+ if(configReady()&&!window.supabase)throw new Error("Supabase подключён в настройках, но библиотека не загрузилась.");
  store.live=!!(configReady() && window.supabase);
  if(store.live){
    const c=window.SUSHIDAY_CONFIG;
