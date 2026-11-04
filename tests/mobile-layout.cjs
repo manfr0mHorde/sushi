@@ -44,19 +44,20 @@ async function inspect(page,width){
  assert.ok(info.bottom.top>=Math.max(info.primary.bottom,info.secondary.bottom)-2,"Hero footer overlaps buttons at "+width);
  assert.ok(info.price.right<=info.add.left+2,"Price and add button overlap at "+width);
  // Product modal should fit even at the smallest supported width.
- await page.locator(".set-details-link").first().click();
- const details=await page.locator("#details-modal").boundingBox();
+ await page.click(".set-details-link");
+ const details=await (await page.$("#details-modal")).boundingBox();
  assert.ok(details&&details.x>=-1&&details.x+details.width<=width+1,"Details dialog off screen at "+width);
- const pending=await page.locator("#details-pending").isVisible();
+ const pending=await page.$eval("#details-pending",e=>!e.hidden && e.getClientRects().length>0);
  assert.equal(pending,true,"Unknown set recipe must be explained, not invented");
- await page.locator("#details-close").click();
- await page.locator(".product-card .add-btn").first().click();
- await page.locator("#open-cart").click();
- const cart=await page.locator("#cart-drawer").boundingBox();
+ await page.click("#details-close");
+ await page.click(".product-card .add-btn");
+ await page.click("#open-cart");
+ const cart=await (await page.$("#cart-drawer")).boundingBox();
  assert.ok(cart&&cart.x>=-1&&cart.x+cart.width<=width+1,"Cart offscreen at "+width);
- await page.locator("#go-checkout").click();
- assert.equal(await page.locator("#checkout-view").isVisible(),true);
- await page.locator("#close-cart").click();
+ await page.click("#go-checkout");
+ assert.equal(await page.$eval("#checkout-view",e=>!e.hidden),true);
+ await page.click("#close-cart");
+ await page.evaluate(()=>localStorage.removeItem("sushiday_cart_v2"));
  console.log("PASS viewport="+width+"px: width, hero, cards, set details, cart, checkout");
  return info;
 }
@@ -76,7 +77,7 @@ async function main(){
     await page.goto("http://127.0.0.1:"+server.address().port+"/",{waitUntil:"domcontentloaded"});
     await page.waitForSelector(".product-card");
     await page.screenshot({path:"/tmp/sushiday-shots/phone-390-home.png"});
-    await page.locator("#menu").scrollIntoView();
+    await page.$eval("#menu",e=>e.scrollIntoView());
     await page.screenshot({path:"/tmp/sushiday-shots/phone-390-menu.png"});
    }
   }
