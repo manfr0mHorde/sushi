@@ -119,6 +119,7 @@ function buildOrder(){
  "Получение: "+fulfilment,
  ...(fulfilment==="Доставка"?["Адрес: г. Астана, "+address+(extra?", "+extra:"")]:[]),
  "Оплата: "+d.get("payment"),
+ ...(d.get("payment")==="Kaspi перевод / QR"&&SD.store.settings.kaspi_receiver?["Kaspi ресторана: "+SD.store.settings.kaspi_receiver]:[]),
  ...(kaspi?["Телефон Kaspi для счёта: "+kaspi]:[]),
  ...((d.get("comment")||"").trim()?["Комментарий: "+String(d.get("comment")).trim()]:[]),
  "",
@@ -144,7 +145,11 @@ function checkoutChanges(){
  const delivery=f.elements.fulfilment.value==="Доставка";
  $("delivery-fields").hidden=!delivery;
  $("customer-address").required=delivery;
- $("kaspi-wrap").hidden=f.elements.payment.value!=="Kaspi перевод / QR";
+ const isKaspi=f.elements.payment.value==="Kaspi перевод / QR";
+ $("kaspi-wrap").hidden=!isKaspi;
+ const receiver=SD.store.settings.kaspi_receiver;
+ $("kaspi-receiver-box").hidden=!(isKaspi&&receiver);
+ if(isKaspi&&receiver)$("kaspi-receiver-box").textContent="Реквизиты ресторана: "+receiver+". Переводите деньги только после подтверждения суммы оператором.";
 }
 function bind(){
  $("categories").addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(!b)return;state.category=b.dataset.category;renderCategories();renderProducts();});
@@ -175,7 +180,7 @@ async function start(){
  $("footer-year").textContent=new Date().getFullYear();
  try{
   await SD.initialize();
-  renderCategories();renderProducts();renderCart();updateCartButtons();
+  renderCategories();renderProducts();renderCart();updateCartButtons();checkoutChanges();
   $("demo-notice").hidden=!SD.store.settings.demo_mode;
   $("price-note").hidden=!SD.store.settings.demo_mode;
   const phone=SD.store.settings.phone;
