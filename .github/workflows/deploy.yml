@@ -26,8 +26,8 @@ jobs:
           node --check admin.js
       - name: Run functional smoke tests
         run: |
-          npm install --no-save --no-audit --no-fund jsdom@26
-          node tests/smoke.cjs
+          npm install --prefix /tmp/sushiday-smoke --no-save --no-audit --no-fund jsdom@26
+          NODE_PATH=/tmp/sushiday-smoke/node_modules node tests/smoke.cjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site
