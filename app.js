@@ -90,6 +90,7 @@ function buildOrder(){
  const f=$("checkout-form"),d=new FormData(f);
  const name=(d.get("name")||"").trim(),phone=(d.get("phone")||"").trim(),fulfilment=d.get("fulfilment"),address=(d.get("address")||"").trim();
  if(cartCount()===0)throw Error("Корзина пуста.");
+ if(cartTotal()<(Number(SD.store.settings.min_order)||0))throw Error("Минимальная сумма заказа: "+SD.money(SD.store.settings.min_order));
  if(name.length<2)throw Error("Укажите имя получателя.");
  if(!SD.phoneOk(phone))throw Error("Введите телефон в формате +7 777 123 45 67.");
  if(fulfilment==="Доставка"&&address.length<5)throw Error("Укажите полный адрес доставки.");
