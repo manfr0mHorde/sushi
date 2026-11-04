@@ -83,7 +83,7 @@ function renderTable(){
   const cat=SD.categories.find(c=>c.id===p.category)?.name||p.category;
   const thumb=SD.photo(p.image);
   return '<tr><td><div class="admin-product">'+(thumb?'<img class="admin-thumb" src="'+clean(thumb)+'" alt="">':'<div class="admin-thumb" style="display:grid;place-items:center">🍣</div>')+
-   '<div><strong>'+clean(p.name)+'</strong><small>'+clean(p.description||"Без описания")+'</small></div></div></td>'+
+   '<div><strong>'+clean(p.name)+'</strong><small>'+clean(p.description||"Без описания")+'</small>'+(p.category==="sets"?'<small class="'+(p.composition?"admin-composition-ready":"admin-composition-pending")+'">'+(p.composition?"✓ Состав указан":"! Состав не заполнен")+'</small>':"")+'</div></div></td>'+
    '<td>'+clean(cat)+'</td><td><strong>'+SD.money(p.price)+'</strong></td>'+
    '<td><span class="pill '+(p.visible===false?"off":"")+'">'+(p.visible===false?"Скрыт":"На сайте")+'</span></td>'+
    '<td><div class="table-actions"><button class="small-action" type="button" data-edit="'+clean(p.id)+'">Изменить</button><button class="small-action" type="button" data-toggle="'+clean(p.id)+'">'+(p.visible===false?"Показать":"Скрыть")+'</button><button class="small-action" type="button" data-delete="'+clean(p.id)+'" title="Удалить">✕</button></div></td></tr>';
@@ -108,6 +108,9 @@ function openProduct(id=null){
  $("product-category").value=editing?.category||"sets";
  $("product-price").value=editing?.price??"";
  $("product-description").value=editing?.description||"";
+ $("product-composition").value=editing?.composition||"";
+ $("product-pieces").value=editing?.pieces??"";
+ updateCompositionFields();
  $("product-image").value=editing?.image||"";
  $("product-badge").value=editing?.badge||"";
  $("product-sort").value=editing?.sort_order??SD.store.products.length;
@@ -117,6 +120,10 @@ function openProduct(id=null){
  $("product-overlay").hidden=false;
  document.body.style.overflow="hidden";
  $("product-name").focus();
+}
+function updateCompositionFields(){
+ const isSet=$("product-category").value==="sets";
+ $("set-editor-fields").hidden=!isSet;
 }
 function closeProduct(){
  $("product-overlay").hidden=true;
@@ -140,7 +147,11 @@ async function saveProduct(e){
    const url=$("product-image").value.trim();
    if(url&&!SD.photo(url))throw Error("Нужна корректная HTTPS-ссылка на изображение.");
    const id=editing?.id||(globalThis.crypto?.randomUUID?.()||"new-"+Date.now().toString(36));
-   await SD.saveProduct({id,name,category,price,description:$("product-description").value.trim(),image:url,badge:$("product-badge").value.trim(),sort_order:Math.max(0,Number($("product-sort").value)||0),visible:$("product-visible").checked});
+   const rawPieces=$("product-pieces").value.trim();
+   const pieces=category==="sets"&&rawPieces!==""?Number(rawPieces):null;
+   if(pieces!==null&&(!Number.isInteger(pieces)||pieces<1||pieces>400))throw Error("Укажите корректное количество кусочков (1–400).");
+   const composition=category==="sets"?$("product-composition").value.trim():"";
+   await SD.saveProduct({id,name,category,price,description:$("product-description").value.trim(),composition,pieces,image:url,badge:$("product-badge").value.trim(),sort_order:Math.max(0,Number($("product-sort").value)||0),visible:$("product-visible").checked});
    closeProduct();renderAll();toast("Товар сохранён");
  }catch(ex){error($("product-error"),ex.message);}
  finally{btn.disabled=false;}
@@ -196,6 +207,7 @@ function bind(){
  $("product-overlay").addEventListener("click",e=>{if(e.target===$("product-overlay"))closeProduct();});
  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("product-overlay").hidden)closeProduct();});
  $("product-image").addEventListener("change",updatePreview);
+ $("product-category").addEventListener("change",updateCompositionFields);
  $("product-form").addEventListener("submit",saveProduct);
  $("settings-form").addEventListener("submit",saveSettings);
 }
