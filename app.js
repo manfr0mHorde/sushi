@@ -44,7 +44,7 @@ function makeCard(p){
   '</div></div></article>';
 }
 function renderProducts(){
- const prods=SD.store.products.filter(p=>p.visible!==false && (state.category==="all"||p.category===state.category) && (p.name+" "+(p.description||"")).toLocaleLowerCase("ru").includes(state.query));
+ const prods=SD.store.products.filter(p=>p.visible!==false && (state.category==="all"||p.category===state.category) && (p.name+" "+(p.description||"")).toLocaleLowerCase("ru").includes(state.query)).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
  $("product-grid").innerHTML=prods.map(makeCard).join("");
  $("empty-state").hidden=!!prods.length;
  $("product-count").textContent=prods.length+" "+(prods.length===1?"позиция":prods.length>=2&&prods.length<=4?"позиции":"позиций");
@@ -64,8 +64,9 @@ function renderCart(){
  $("checkout-total").textContent=SD.money(cartTotal());
  const fee=SD.store.settings.delivery_fee;
  const caption=fee===null||fee===undefined?"Доставка рассчитывается отдельно":Number(fee)===0?"Условия доставки уточняйте у ресторана":"Доставка: "+SD.money(fee);
- document.querySelector(".drawer-footnote").textContent=caption;
- document.querySelector(".checkout-total small").textContent=caption;
+ const deliveryText=[caption,SD.store.settings.delivery_note].filter(Boolean).join(" · ");
+ document.querySelector(".drawer-footnote").textContent=deliveryText;
+ document.querySelector(".checkout-total small").textContent=deliveryText;
 }
 function openCart(checkout=false){
  state.checkout=checkout&&cartCount()>0;
@@ -94,7 +95,7 @@ function buildOrder(){
  if(name.length<2)throw Error("Укажите имя получателя.");
  if(!SD.phoneOk(phone))throw Error("Введите телефон в формате +7 777 123 45 67.");
  if(fulfilment==="Доставка"&&address.length<5)throw Error("Укажите полный адрес доставки.");
- const kaspi=(d.get("kaspi")||"").trim();
+ const kaspi=d.get("payment")==="Kaspi перевод / QR"?(d.get("kaspi")||"").trim():"";
  if(kaspi&&!SD.phoneOk(kaspi))throw Error("Проверьте номер телефона Kaspi.");
  if(!$("privacy").checked)throw Error("Необходимо согласие на передачу данных в WhatsApp.");
  const lines=cartEntries().map(({product:p,qty},i)=>(i+1)+". "+p.name+" × "+qty+" — "+SD.money(p.price*qty));
@@ -111,6 +112,7 @@ function buildOrder(){
  "",
  "*Товары: "+SD.money(cartTotal())+"*",
  "🚗 "+feeInfo,
+ ...(fulfilment==="Доставка"&&SD.store.settings.delivery_note?["Примечание о доставке: "+SD.store.settings.delivery_note]:[]),
  ...(SD.store.settings.demo_mode?["⚠️ Цены предварительные, требуется подтверждение."]:[]),
  "",
  "*ДАННЫЕ КЛИЕНТА*",
