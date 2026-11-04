@@ -11,12 +11,18 @@ create table if not exists public.products (
   category text not null check (category in ('sets','rolls','baked','fried','pizza','snacks','drinks','sauces')),
   price integer not null check (price >= 0),
   description text not null default '',
+  composition text not null default '',
+  pieces integer check (pieces is null or (pieces between 1 and 400)),
   image text not null default '',
   badge text not null default '',
   visible boolean not null default true,
   sort_order integer not null default 0,
   created_at timestamptz not null default now()
 );
+-- Safe additive migration for installations created before set composition was added.
+alter table public.products add column if not exists composition text not null default '';
+alter table public.products add column if not exists pieces integer;
+
 create table if not exists public.settings (
   id integer primary key check (id = 1),
   whatsapp text not null default '',
